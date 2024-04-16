@@ -22,7 +22,8 @@ const News =(props)=> {
   
   const updateNewsPage = async ()=>{
     props.setProgress(20);
-    const url = `https://newsapi.org/v2/top-headlines?country=in&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
+    // const url = `https://newsapi.org/v2/top-headlines?country=in&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
+    const url = `https://gnews.io/api/v4/top-headlines?category=${props.category}&lang=${props.lang}&max=50&country=in&apikey=${props.apiKey}`;
     setLoading( true)
     let data = await fetch(url);
     props.setProgress(50);
@@ -34,7 +35,7 @@ const News =(props)=> {
     //   loading: false
     // });
     setArticles(parsedData.articles)
-    setTotalResults(parsedData.totalResults)
+    setTotalResults(parsedData.totalArticles)
     setLoading(false)
     
 
@@ -45,7 +46,7 @@ const News =(props)=> {
       document.title = `FreshNews | ${props.category}`
     updateNewsPage();
     // eslint-disable-next-line
-  }, [])
+  }, [props.lang])
     
   // const componentDidMount= async ()=> {
   //   this.updateNewsPage();
@@ -54,7 +55,10 @@ const News =(props)=> {
 
   const fetchMoreData = async () => {
     // this.setState({page:state.page+1});
-    const url = `https://newsapi.org/v2/top-headlines?country=in&category=${props.category}&apiKey=${props.apiKey}&page=${page+1}&pageSize=${props.pageSize}`;
+    // const url = `https://newsapi.org/v2/top-headlines?country=in&category=${props.category}&apiKey=${props.apiKey}&page=${page+1}&pageSize=${props.pageSize}`;
+
+    // NOTE: API only returning 10 articles per request. need to upgrade plan
+    const url = `https://gnews.io/api/v4/top-headlines?category=${props.category}&lang=${props.lang}&country=in&max=50&apikey=${props.apiKey}`;
     setPage(page+1)
     let data = await fetch(url);
     let parsedData = await data.json();
@@ -64,7 +68,7 @@ const News =(props)=> {
     //   loading: false
     // });
     setArticles(articles.concat(parsedData.articles))
-    setTotalResults(parsedData.totalResults)
+    setTotalResults(parsedData.totalArticles)
     setLoading(false)
     
   };
@@ -72,7 +76,7 @@ const News =(props)=> {
  
     return (
       <>
-        <h2 className="text-center" style={{marginTop:"90px"}} >Today's Top Headlines :</h2>
+        <h2 className="text-center" style={{marginTop:"90px"}} >Today's Top Headlines</h2>
         {loading?<Loader/>:""}
         <InfiniteScroll
           dataLength={articles.length}
@@ -87,14 +91,14 @@ const News =(props)=> {
               <div className="col-md-4 " key={element.url}>
                 <NewsItem
                   title={element.title ? element.title : ""}
-                  desc={element.content ? element.content : ""}
+                  desc={element.description ? element.description : ""}
                   imageUrl={
-                    element.urlToImage
-                      ? element.urlToImage
+                    element.image
+                      ? element.image
                       : "https://i.gadgets360cdn.com/large/microsoft_clippy_twitter_1626334118424.jpg"
                   }
                   newsUrl={element.url}
-                  author={element.author?element.author:"Unknown"}
+                  author={element.source.name?element.source.name:"Unknown"}
                   date={element.publishedAt}
                   />
               </div>
@@ -110,4 +114,3 @@ const News =(props)=> {
 }
 
 export default News;
-// Your API key is: 2a02d984c1af4cad99eed6c7385685c4

@@ -15,7 +15,7 @@ const NewsItem=(props)=> {
             <p className="card-text">
               {props.desc}
             </p>
-            <a href="noreferrer" target="_blank" className="btn btn-primary">
+            <a href={props.newsUrl} target="_blank" rel="noreferrer" className="btn btn-primary">
             {/* props.newsUrl */}
               Read Article
             </a>
